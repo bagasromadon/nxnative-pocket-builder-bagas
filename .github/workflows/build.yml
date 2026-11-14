@@ -105,10 +105,10 @@ jobs:
           ref: main
 
       - name: Checkout standard nxnative version
-        if: inputs.device == 'iPhone 15 Pro/Pro Max or newer (standard)'
+        if: inputs.device == 'Editable Touch Control (standard)'
         uses: actions/checkout@v4
         with:
-          repository: seedds/nxnative
+          repository: bagasromadon/NX2Apple-bagasromadon
           ref: main
 
       - name: Checkout Metal 3 + BC fallback version (2020 iPad Pro / iPhone 15 or older)
