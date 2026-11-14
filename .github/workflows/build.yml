@@ -10,7 +10,7 @@ on:
         default: "iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)"
         options:
           - "iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)"
-          - "iPhone 15 Pro/Pro Max or newer (standard)"
+          - "Editable Touch Control (standard)"
           - "iPad (2020 A12Z) / iPhone 15 or older (Metal 3 + BC fallback)"
       build_mode:
         description: "Build full IPA or run a fast 2-minute compatibility survey"
