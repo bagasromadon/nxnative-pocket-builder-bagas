@@ -907,7 +907,7 @@ jobs:
                   "        if (g_win.ticket[g_win.cur]) mtl_present_wait(g_win.ticket[g_win.cur]);",
               ).replace(
                   "uint64_t period = 1000000000ull * vs / 60, now = now_ns();",
-                  "uint64_t period = (fps_t >= 120) ? (1000000000ull / 120) : (1000000000ull * vs / 60), now = now_ns();",
+                  "uint64_t period = (mtl_fps_target() >= 120) ? (1000000000ull / 120) : (1000000000ull * vs / 60), now = now_ns();",
               )
               hle_gl_m.write_text(txt, encoding="utf-8")
 
