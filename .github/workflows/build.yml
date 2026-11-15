@@ -774,6 +774,55 @@ jobs:
           gamepad_m = Path("dm/ios/Sources/DmGamepad.m")
           has_touch_geo = gamepad_m.is_file() and "DmPadGeometry.h" in gamepad_m.read_text(encoding="utf-8", errors="replace")
 
+          # Legacy engine regression: its image identity code references a
+          # missing package_names(). Read bounded PFS0 name tables for NSP/NSZ.
+          # For XCI/XCZ or malformed tables, fail closed: existing callers
+          # disable RomFS image reuse (and experimental nxbuild extraction).
+          builder_py = Path('scripts/build_ipa_from_nsp.py')
+          if builder_py.is_file():
+              bt = builder_py.read_text(encoding='utf-8')
+              if 'package_names(' in bt and not re.search(r'^def package_names\s*\(', bt, re.M):
+                  anchor = 'def package_contents(p):'
+                  if bt.count(anchor) != 1:
+                      raise SystemExit('Package identity fix: unsupported engine source; review before building')
+                  helper = '''def package_names(path):
+              # NSP/NSZ PFS0 header only. Unsupported/corrupt containers must
+              # not produce a trusted list of content IDs for image reuse.
+              with open(path, 'rb') as f:
+                  size = f.seek(0, 2)
+                  f.seek(0)
+                  header = f.read(16)
+                  if len(header) != 16 or header[:4] != b'PFS0':
+                      raise BuildError('package name listing is unavailable for this container')
+                  count, strings_size, _ = struct.unpack('<III', header[4:])
+                  table_size = count * 24
+                  if count > 100000 or strings_size > 16777216 or 16 + table_size + strings_size > size:
+                      raise BuildError('invalid PFS0 name table')
+                  table, strings = f.read(table_size), f.read(strings_size)
+                  if len(table) != table_size or len(strings) != strings_size:
+                      raise BuildError('truncated PFS0 name table')
+                  data_offset = 16 + table_size + strings_size
+                  names = []
+                  for i in range(count):
+                      off, length, name_off, _ = struct.unpack_from('<QQII', table, i * 24)
+                      if off > size - data_offset or length > size - data_offset - off or name_off >= strings_size:
+                          raise BuildError('invalid PFS0 entry')
+                      end = strings.find(b'\\0', name_off)
+                      if end < 0:
+                          raise BuildError('unterminated PFS0 name')
+                      try:
+                          names.append(strings[name_off:end].decode('utf-8'))
+                      except UnicodeDecodeError as exc:
+                          raise BuildError('invalid PFS0 name') from exc
+                  return names
+
+
+          '''
+                  bt = bt.replace(anchor, helper + anchor, 1)
+                  compile(bt, str(builder_py), 'exec')
+                  builder_py.write_text(bt, encoding='utf-8')
+                  print('Applied missing package-name helper (PFS0; other formats use normal extraction).')
+
           # 1. Fix iPad legacy renderer (nvn_mtl_legacy.inc) & OpenGL cursor lag (hle_gl.m):
           #    - Fix TONTON_SHADER_CHAIN -> DMSH_CHAIN compile error
           #    - Enable CAMetalDisplayLink (DM_HAVE_METAL_DISPLAY_LINK=1, iOS 17.0 target, A12Z LSE atomics)
