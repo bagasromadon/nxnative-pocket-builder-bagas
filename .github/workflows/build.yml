@@ -10,7 +10,7 @@ on:
         default: "iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)"
         options:
           - "iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)"
-          - "iPhone 15 Pro/Pro Max or newer (standard)"
+          - "Bagas (standard)"
           - "iPad (2020 A12Z) / iPhone 15 or older (Metal 3 + BC fallback)"
       build_mode:
         description: "Build full IPA or run a fast 2-minute compatibility survey"
@@ -105,10 +105,10 @@ jobs:
           ref: main
 
       - name: Checkout standard nxnative version
-        if: inputs.device == 'iPhone 15 Pro/Pro Max or newer (standard)'
+        if: inputs.device == 'Bagas (standard)'
         uses: actions/checkout@v4
         with:
-          repository: seedds/nxnative
+          repository: bagasromadon/NX2Apple
           ref: main
 
       - name: Checkout Metal 3 + BC fallback version (2020 iPad Pro / iPhone 15 or older)
