@@ -124,7 +124,7 @@ jobs:
           python-version: "3.13"
 
       - name: Sync NX2Apple engine patches
-        if: inputs.device == 'iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)'
+        if: inputs.device == 'iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)' || inputs.device == 'Bagas (standard)'
         shell: bash
         run: |
           set -euo pipefail
