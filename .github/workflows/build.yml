@@ -137,7 +137,20 @@ jobs:
               cp -a "engine/$dir" "$dir"
             fi
           done
+          # Export the patched engine as a clean, downloadable tree before removing
+          # the temporary Git checkout. The build continues using the copied root dirs.
+          python tools/engine.py tree --out "$RUNNER_TEMP/engine"
+          (cd "$RUNNER_TEMP" && zip -qr "$RUNNER_TEMP/NX2Apple-engine.zip" engine)
           rm -rf engine
+
+      - name: Upload generated NX2Apple engine tree
+        if: inputs.device == 'iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)' || inputs.device == 'Bagas (standard)'
+        uses: actions/upload-artifact@v4
+        with:
+          name: NX2Apple-engine
+          path: ${{ runner.temp }}/NX2Apple-engine.zip
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Record engine revision and runner tools
         shell: bash
