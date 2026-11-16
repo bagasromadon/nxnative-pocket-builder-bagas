@@ -101,7 +101,7 @@ jobs:
         if: inputs.device == 'iPhone 15 Pro/Pro Max or newer - NX2Apple Patched (Default)'
         uses: actions/checkout@v4
         with:
-          repository: LNPANDY/NX2Apple
+          repository: bagasromadon/NX2Apple
           ref: main
 
       - name: Checkout standard nxnative version
