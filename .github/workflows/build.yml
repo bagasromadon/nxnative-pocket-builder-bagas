@@ -1660,6 +1660,8 @@ jobs:
                       }
                   }
               }
+              // In-game layout editor (patch 0056): move, size and opacity of the touch controls. Not offered in Tap or Trackpad mode.
+              if dm_pad_edit_offered() { controls.append(UIAction(title: "Edit control layout", image: UIImage(systemName: "slider.horizontal.3")) { _ in DispatchQueue.main.async { dm_pad_edit_begin() } }) }
               other.append(UIAction(title: "More Settings & Cloud Saves…", image: UIImage(systemName: "slider.horizontal.3")) { _ in dm_open_settings_sheet() })
               func group(_ title: String, _ rows: [UIMenuElement]) -> UIMenu {
                   let children: [UIMenuElement] = rows.isEmpty ? [UIAction(title: "No settings available", attributes: .disabled) { _ in }] : rows
