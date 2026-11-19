@@ -2623,7 +2623,7 @@ jobs:
                              {'parentFolderId': root, 'folderName': 'NxNative temporary IPA', 'public': True}, token)
               folder = created.get('id')
               if not valid_uuid(folder): raise RuntimeError('GoFile folder response was incomplete')
-              expiry = int(time.time()) + 10 * 60 * 60
+              expiry = int(time.time()) + 5 * 60 * 60
               set_expiry(expiry)  # fail closed: never upload into a folder without a confirmed expiry
               with tempfile.TemporaryDirectory(prefix='nx-gofile-', dir=os.environ['RUNNER_TEMP']) as tmp:
                   config = Path(tmp) / 'curl.conf'
@@ -2656,7 +2656,7 @@ jobs:
               # Prefer five hours from the completed upload; the earlier verified expiry
               # remains a safe upper bound if this refresh fails.
               try:
-                  later_expiry = int(time.time()) + 10 * 60 * 60
+                  later_expiry = int(time.time()) + 5 * 60 * 60
                   set_expiry(later_expiry)
                   expiry = later_expiry
               except Exception:
